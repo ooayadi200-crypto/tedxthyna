@@ -23,11 +23,11 @@ export function Page({ title, children, footer = true }: { title: string; childr
         aria-hidden
         variants={{
           initial: { scaleY: 1, transformOrigin: "50% 0%" },
-          enter: { scaleY: 0, transformOrigin: "50% 0%", transition: { duration: 0.9, ease: EASE, delay: 0.05 } },
-          exit: { scaleY: 1, transformOrigin: "50% 100%", transition: { duration: 0.65, ease: EASE } },
+          enter: { scaleY: 0, transformOrigin: "50% 0%", transition: { duration: 0.6, ease: EASE } },
+          exit: { scaleY: 1, transformOrigin: "50% 100%", transition: { duration: 0.45, ease: EASE } },
         }}
       >
-        <img src="/media/logo.png" alt="" />
+        <img src="/media/logo.webp" alt="" />
       </motion.div>
       {children}
       {footer && <Footer />}

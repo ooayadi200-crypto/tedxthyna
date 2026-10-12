@@ -10,7 +10,6 @@ export function Footer() {
   const lenis = useLenis();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const y = useTransform(scrollYProgress, [0, 1], ["40%", "0%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.6, 1]);
 
   const toTop = () => (lenis ? lenis.scrollTo(0, { duration: 2 }) : window.scrollTo({ top: 0, behavior: "smooth" }));
 
@@ -18,7 +17,7 @@ export function Footer() {
     <footer ref={ref} className="footer">
       <div className="footer-top">
         <div className="footer-statement">
-          <span className="mono red">Transmission ends / {EVENT.caseNo}</span>
+          <img src="/media/logo.webp" alt="TEDx Thyna Youth" className="footer-logo" width={96} height={96} loading="lazy" />
           <p>
             The mission doesn&apos;t <em>end here.</em>
           </p>
@@ -59,7 +58,6 @@ export function Footer() {
       </div>
 
       <div className="footer-giant" aria-hidden>
-        <motion.img src="/media/logo.png" alt="" className="footer-mark" style={{ scale }} />
         <motion.span style={{ y }}>THYNA</motion.span>
       </div>
 

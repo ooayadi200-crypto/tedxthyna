@@ -101,7 +101,7 @@ export default function Contact() {
             <span className="ct-block is-dark" />
             <span className="ct-block is-red" />
             <div className="ct-logo">
-              <img src="/media/logo.png" alt="" />
+              <img src="/media/logo.webp" alt="" />
             </div>
             <Palms className="ct-palms" />
             <div className="ct-stamp mono">

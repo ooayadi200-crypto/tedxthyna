@@ -18,13 +18,32 @@ function RegisterRedirect() {
   return <div className="page-fallback" />;
 }
 
-const Mission = lazy(() => import("./pages/Mission"));
-const Speakers = lazy(() => import("./pages/Speakers"));
-const Organization = lazy(() => import("./pages/Organization"));
-const Scene = lazy(() => import("./pages/Scene"));
-const Agenda = lazy(() => import("./pages/Agenda"));
-const Contact = lazy(() => import("./pages/Contact"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const loaders = {
+  mission: () => import("./pages/Mission"),
+  speakers: () => import("./pages/Speakers"),
+  organization: () => import("./pages/Organization"),
+  scene: () => import("./pages/Scene"),
+  agenda: () => import("./pages/Agenda"),
+  contact: () => import("./pages/Contact"),
+  notFound: () => import("./pages/NotFound"),
+};
+const Mission = lazy(loaders.mission);
+const Speakers = lazy(loaders.speakers);
+const Organization = lazy(loaders.organization);
+const Scene = lazy(loaders.scene);
+const Agenda = lazy(loaders.agenda);
+const Contact = lazy(loaders.contact);
+const NotFound = lazy(loaders.notFound);
+
+/** Fetch the other pages quietly once the first one is on screen, so navigation is instant. */
+function usePrefetchRoutes() {
+  useEffect(() => {
+    const run = () => Object.values(loaders).forEach((load) => load().catch(() => undefined));
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(run, { timeout: 4000 });
+    else window.setTimeout(run, 2500);
+  }, []);
+}
 
 const INTRO_KEY = "tedx-thyna-intro-seen";
 
@@ -62,6 +81,7 @@ function Routes() {
 }
 
 export default function App() {
+  usePrefetchRoutes();
   const [intro, setIntro] = useState(shouldPlayIntro);
   const [revealed, setRevealed] = useState(() => !intro);
   const reveal = useCallback(() => setRevealed(true), []);

@@ -217,6 +217,15 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    target: "es2020",
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-dom/client", "wouter"],
+          motion: ["framer-motion", "lenis"],
+        },
+      },
+    },
   },
   server: {
     port: 3000,

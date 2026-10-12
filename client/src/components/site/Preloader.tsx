@@ -13,14 +13,14 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
     document.documentElement.classList.add("is-locked");
     let raf = 0;
     const start = performance.now();
-    const duration = 2600;
+    const duration = 1300;
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
       // stuttering progress, like a file being pieced together
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       setProgress(Math.round(eased * 100));
       if (t < 1) raf = requestAnimationFrame(tick);
-      else window.setTimeout(() => setLeaving(true), 350);
+      else window.setTimeout(() => setLeaving(true), 120);
     };
     raf = requestAnimationFrame(tick);
     return () => {
@@ -32,8 +32,8 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
   useEffect(() => {
     if (!leaving) return;
     document.documentElement.classList.remove("is-locked");
-    const r = window.setTimeout(onReveal, 350);
-    const t = window.setTimeout(onDone, 1400);
+    const r = window.setTimeout(onReveal, 250);
+    const t = window.setTimeout(onDone, 1000);
     return () => {
       window.clearTimeout(r);
       window.clearTimeout(t);
@@ -47,12 +47,12 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
       <motion.div
         className="preloader-panel is-top"
         animate={leaving ? { y: "-100%" } : { y: 0 }}
-        transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
+        transition={{ duration: 0.8, ease: EASE, delay: 0.05 }}
       />
       <motion.div
         className="preloader-panel is-bottom"
         animate={leaving ? { y: "100%" } : { y: 0 }}
-        transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
+        transition={{ duration: 0.8, ease: EASE, delay: 0.05 }}
       />
       <motion.div className="preloader-seam" initial={{ scaleX: 0 }} animate={leaving ? { scaleX: 1, opacity: [1, 1, 0] } : { scaleX: progress / 100 }} transition={leaving ? { duration: 0.9, ease: EASE } : { duration: 0.2 }} />
 
@@ -69,12 +69,12 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
             </button>
 
             <motion.img
-              src="/media/logo.png"
+              src="/media/logo.webp"
               alt=""
               className="preloader-mark"
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1.8, ease: EASE_OUT }}
+              transition={{ duration: 1, ease: EASE_OUT }}
             />
             <div className="preloader-count">
               <span>{String(progress).padStart(3, "0")}</span>

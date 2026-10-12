@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <Page title="File not found — TEDx Thyna Youth" footer={false}>
       <main className="notfound">
-        <img src="/media/logo.png" alt="" className="notfound-mark" aria-hidden />
+        <img src="/media/logo.webp" alt="" className="notfound-mark" aria-hidden />
         <span className="mono red">Error / File missing</span>
         <h1 className="notfound-code">
           <Chars text="404" delay={0.5} stagger={0.12} />

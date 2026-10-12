@@ -43,13 +43,11 @@ function Hero() {
     return () => window.clearTimeout(t);
   }, [ready, reduce, current]);
 
-  // preload all portraits so swaps are instant
+  // preload only the next portrait, so first load stays light
   useEffect(() => {
-    SPEAKERS.forEach((x) => {
-      const im = new Image();
-      im.src = speakerPhoto(x.photo);
-    });
-  }, []);
+    const im = new Image();
+    im.src = speakerPhoto(SPEAKERS[(current + 1) % SPEAKERS.length].photo);
+  }, [current]);
 
   // pointer depth for the collage layers
   const px = useMotionValue(0);
@@ -264,25 +262,27 @@ function Brief() {
           <motion.img src={img("dossier", 1000)} alt="A sealed case file, photographs and a microphone on a desk" style={{ y: imgY }} loading="lazy" />
           <span className="stamp">Break the<br />pattern</span>
         </div>
-        <Reveal className="brief-copy">
-          <p>
-            TEDx Thyna is more than a stage. It is a gathering of minds, ideas and people capable of changing the way we see the world — a youth-led event built in Sfax, for anyone who refuses to stop asking why.
-          </p>
-          <Link href="/mission" className="btn-link mono" data-cursor="Open">
-            Read the mission <ArrowUpRight size={14} />
-          </Link>
-        </Reveal>
-        <div className="brief-stats">
-          {[
-            ["05", "Speakers"],
-            ["03", "Panelists"],
-            ["02", "Moderators"],
-          ].map(([n, l], i) => (
-            <Reveal key={l} delay={i * 0.1} className="brief-stat">
-              <b>{n}</b>
-              <span className="mono">{l}</span>
-            </Reveal>
-          ))}
+        <div className="brief-side">
+          <Reveal className="brief-copy">
+            <p>
+              TEDx Thyna is more than a stage. It is a gathering of minds, ideas and people capable of changing the way we see the world — a youth-led event built in Sfax, for anyone who refuses to stop asking why.
+            </p>
+            <Link href="/mission" className="btn-link mono" data-cursor="Open">
+              Read the mission <ArrowUpRight size={14} />
+            </Link>
+          </Reveal>
+          <div className="brief-stats">
+            {[
+              ["05", "Speakers"],
+              ["03", "Panelists"],
+              ["02", "Moderators"],
+            ].map(([n, l], i) => (
+              <Reveal key={l} delay={i * 0.1} className="brief-stat">
+                <b>{n}</b>
+                <span className="mono">{l}</span>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -431,7 +431,7 @@ function VoicesTeaser() {
 function Scene() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const clip = useTransform(scrollYProgress, [0, 0.55], ["inset(24% 28% 24% 28% round 4px)", "inset(0% 0% 0% 0% round 0px)"]);
+  const clip = useTransform(scrollYProgress, [0, 0.55], ["inset(36% 24% 8% 24% round 4px)", "inset(0% 0% 0% 0% round 0px)"]);
   const scale = useTransform(scrollYProgress, [0, 0.6], [1.35, 1]);
   const titleOpacity = useTransform(scrollYProgress, [0.35, 0.6], [0, 1]);
   const titleY = useTransform(scrollYProgress, [0.35, 0.65], [60, 0]);
