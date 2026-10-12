@@ -1,50 +1,86 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense, useCallback, useState } from "react";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { Cursor } from "./components/site/Cursor";
+import { IntroContext } from "./components/site/intro";
+import { Nav } from "./components/site/Nav";
+import { Preloader } from "./components/site/Preloader";
+import { SmoothScroll } from "./components/site/SmoothScroll";
 import Home from "./pages/Home";
-import SectionPage from "./pages/SectionPage";
 
+const Mission = lazy(() => import("./pages/Mission"));
+const Voices = lazy(() => import("./pages/Voices"));
+const Organization = lazy(() => import("./pages/Organization"));
+const Scene = lazy(() => import("./pages/Scene"));
+const Agenda = lazy(() => import("./pages/Agenda"));
+const Register = lazy(() => import("./pages/Register"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
-function Router() {
+const INTRO_KEY = "tedx-thyna-intro-seen";
+
+function shouldPlayIntro() {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  try {
+    return window.location.pathname === "/" && !sessionStorage.getItem(INTRO_KEY);
+  } catch {
+    return window.location.pathname === "/";
+  }
+}
+
+function Routes() {
+  const [location] = useLocation();
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/mission"}>{() => <SectionPage section="mission" />}</Route>
-      <Route path={"/minds"}>{() => <SectionPage section="minds" />}</Route>
-      <Route path={"/organization"}>{() => <SectionPage section="organization" />}</Route>
-      <Route path={"/scene"}>{() => <SectionPage section="scene" />}</Route>
-      <Route path={"/agenda"}>{() => <SectionPage section="agenda" />}</Route>
-      <Route path={"/register"}>{() => <SectionPage section="register" />}</Route>
-      <Route path={"/contact"}>{() => <SectionPage section="contact" />}</Route>
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <AnimatePresence mode="wait" initial={false}>
+      <Suspense fallback={<div className="page-fallback" />} key={location}>
+        <Switch location={location}>
+          <Route path="/" component={Home} />
+          <Route path="/mission" component={Mission} />
+          <Route path="/minds" component={Voices} />
+          <Route path="/voices" component={Voices} />
+          <Route path="/organization" component={Organization} />
+          <Route path="/scene" component={Scene} />
+          <Route path="/agenda" component={Agenda} />
+          <Route path="/register" component={Register} />
+          <Route path="/contact" component={Contact} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
+    </AnimatePresence>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+export default function App() {
+  const [intro, setIntro] = useState(shouldPlayIntro);
+  const [revealed, setRevealed] = useState(() => !intro);
+  const reveal = useCallback(() => setRevealed(true), []);
+  const finish = useCallback(() => {
+    try {
+      sessionStorage.setItem(INTRO_KEY, "1");
+    } catch {
+      /* storage unavailable */
+    }
+    setIntro(false);
+  }, []);
 
-function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
+      <SmoothScroll>
+        <IntroContext.Provider value={revealed}>
+          <a href="#main" className="skip-link">
+            Skip to content
+          </a>
+          {intro && <Preloader onReveal={reveal} onDone={finish} />}
+          <Cursor />
+          <div className="grain" aria-hidden />
+          <Nav />
+          <div id="main">
+            <Routes />
+          </div>
+        </IntroContext.Provider>
+      </SmoothScroll>
     </ErrorBoundary>
   );
 }
-
-export default App;
