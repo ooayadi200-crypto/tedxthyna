@@ -21,14 +21,14 @@ export default function Agenda() {
         label="The agenda"
         image="desk"
         title={[
-          <span key="a">The day</span>,
+          <span key="a">The agenda</span>,
           <span key="b">will be</span>,
           <em key="c">revealed.</em>,
         ]}
-        lead="The programme is being assembled. The next signal will announce every moment."
+        lead="The date is set — 15 November 2026, 10:00 to 20:00. The full programme of talks, panels and performances is coming soon."
         meta={[
           ["Date", EVENT.dateLabel],
-          ["Status", "In preparation"],
+          ["Time", "10:00 – 20:00"],
         ]}
       />
       <main>
@@ -65,7 +65,7 @@ export default function Agenda() {
             </span>
           </Lines>
           <Reveal>
-            <p className="lead-copy">Register your intent now and you will be the first to know when the agenda is declassified.</p>
+            <p className="lead-copy">Register now and you will be the first to know when the full agenda is announced.</p>
             <div className="row-gap">
               <a className="btn btn-red" href={EVENT.registerUrl} data-cursor="Join">
                 <span className="btn-fill" />

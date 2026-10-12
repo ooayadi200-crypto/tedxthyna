@@ -18,7 +18,7 @@ export default function Scene() {
         lead="An address, a stage, a city waiting for the next signal."
         meta={[
           ["Date", EVENT.dateLabel],
-          ["Time", "To be announced"],
+          ["Time", "10:00 – 20:00"],
         ]}
       />
       <main>
@@ -44,8 +44,8 @@ export default function Scene() {
                   <dd>{EVENT.dateLabel}</dd>
                 </div>
                 <div>
-                  <dt className="mono">Doors</dt>
-                  <dd>To be announced</dd>
+                  <dt className="mono">Time</dt>
+                  <dd>10:00 – 20:00</dd>
                 </div>
               </dl>
               <a className="btn btn-red" href={EVENT.mapsUrl} target="_blank" rel="noreferrer" data-cursor="Map">
