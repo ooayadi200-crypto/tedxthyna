@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Register — TEDx Thyna Youth 2026 · 15 November, Sfax</title>
+    <meta name="description" content="Get your General Pass for TEDx Thyna Youth 2026 — 15 November, Complexe Culturel Mohamed Jamoussi, Sfax." />
+    <meta name="theme-color" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Get your pass — TEDx Thyna Youth 2026" />
+    <meta property="og:description" content="15 November 2026 · Complexe Culturel Mohamed Jamoussi, Sfax · 10:00 – 20:00" />
+    <meta property="og:image" content="/assets/og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
+    <link rel="apple-touch-icon" href="/assets/favicon.png" />
+    <link rel="preload" href="/fonts/montserrat.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/ticket-template.webp" as="image" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/config.js"></script>
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="bg" aria-hidden="true">
+      <div class="bg-x is-a"></div>
+      <div class="bg-x is-b"></div>
+      <div class="bg-glow"></div>
+    </div>
+
+    <header class="top">
+      <a href="https://tedxthyna.com" class="brand" aria-label="TEDx Thyna Youth — main website">
+        <img src="/assets/wordmark-light.png" alt="TEDx Thyna Youth" width="180" height="31" />
+      </a>
+      <a href="https://tedxthyna.com" class="top-link">tedxthyna.com <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <p class="kicker"><span class="dot"></span> Registration open · General Pass</p>
+        <h1>Get your <em>pass.</em></h1>
+        <p class="spaced"><span>Ideas</span> <span class="red">Shape</span> <span>Tomorrow</span></p>
+        <ul class="facts">
+          <li><b>15 Nov 2026</b><span>10:00 – 20:00</span></li>
+          <li><b>Complexe Culturel Mohamed Jamoussi</b><span>Rue Ibn Al Jazzar, Sfax</span></li>
+          <li><b>General Pass</b><span>1 attendee</span></li>
+        </ul>
+      </section>
+
+      <section class="ticket-zone" aria-label="Your ticket">
+        <div class="ticket-stage" id="ticketStage">
+          <div class="ticket-tilt" id="ticketTilt">
+            <canvas id="ticket" width="1772" height="709" role="img" aria-label="TEDx Thyna Youth General Pass"></canvas>
+            <span class="ticket-shine" aria-hidden="true"></span>
+          </div>
+        </div>
+        <p class="ticket-hint" id="ticketHint">Live preview — your name appears on the pass as you type.</p>
+        <div class="ticket-actions" id="ticketActions" hidden>
+          <button class="btn btn-red" id="downloadBtn" type="button">Download ticket <span aria-hidden="true">↓</span></button>
+          <button class="btn btn-ghost" id="shareBtn" type="button" hidden>Share</button>
+          <a class="btn btn-ghost" id="calendarBtn" download="tedx-thyna-youth-2026.ics" href="#">Add to calendar</a>
+        </div>
+      </section>
+
+      <section class="card" id="formCard">
+        <div class="tabs" role="tablist">
+          <button role="tab" class="tab is-on" aria-selected="true" data-mode="register" type="button">Register</button>
+          <button role="tab" class="tab" aria-selected="false" data-mode="lookup" type="button">I already registered</button>
+        </div>
+
+        <form id="form" novalidate>
+          <div class="mode-register">
+            <label class="field">
+              <span>Full name *</span>
+              <input name="name" id="name" required maxlength="40" autocomplete="name" placeholder="As it should appear on your pass" />
+            </label>
+            <div class="row">
+              <label class="field">
+                <span>Email *</span>
+                <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+              </label>
+              <label class="field">
+                <span>Phone *</span>
+                <input name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+216 XX XXX XXX" />
+              </label>
+            </div>
+            <div class="row">
+              <label class="field">
+                <span>You are *</span>
+                <select name="profile" required>
+                  <option value="" disabled selected>Choose…</option>
+                  <option>High-school student</option>
+                  <option>University student</option>
+                  <option>Professional</option>
+                  <option>Entrepreneur</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>School / company</span>
+                <input name="organization" maxlength="80" autocomplete="organization" placeholder="Optional" />
+              </label>
+            </div>
+            <label class="field">
+              <span>How did you hear about us? *</span>
+              <select name="source" required>
+                <option value="" disabled selected>Choose…</option>
+                <option>Instagram</option>
+                <option>Facebook</option>
+                <option>LinkedIn</option>
+                <option>A friend</option>
+                <option>School / university</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label class="check">
+              <input type="checkbox" name="consent" required />
+              <span>I agree that TEDx Thyna Youth stores my details to manage my registration and contact me about the event.</span>
+            </label>
+          </div>
+
+          <div class="mode-lookup" hidden>
+            <p class="lookup-note">Enter the email you registered with and we will bring your pass back.</p>
+            <label class="field">
+              <span>Email *</span>
+              <input name="lookupEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+            </label>
+          </div>
+
+          <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <p class="error" id="error" role="alert" hidden></p>
+
+          <button class="btn btn-red btn-wide" id="submitBtn" type="submit">
+            <span class="label">Get my pass</span>
+            <span class="spinner" aria-hidden="true"></span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <p class="fine">Free entry · seats are limited · one pass per person.</p>
+        </form>
+
+        <div class="success" id="success" hidden>
+          <p class="kicker"><span class="dot"></span> <span id="successKicker">You're in</span></p>
+          <h2>See you on <em>15 November.</em></h2>
+          <p id="successText">Your pass is ready above. Download it and show it at the entrance — on your phone or printed.</p>
+          <button class="btn btn-ghost" id="againBtn" type="button">Register someone else</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>x = independently organized TED event</span>
+      <span>
+        <a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram</a> ·
+        <a href="mailto:affes.zied@tedxthyna.com">Contact</a>
+      </span>
+      <span>© 2026 TEDx Thyna Youth · This independent TEDx event is operated under license from TED.</span>
+    </footer>
+  </body>
+</html>
