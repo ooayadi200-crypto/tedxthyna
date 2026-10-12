@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReduce
 import { ArrowDownRight, ArrowUpRight, MapPin } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
-import { EVENT, FILES, img, speakerSlug, SPEAKERS, srcSet } from "@/data/site";
+import { EVENT, FILES, img, speakerPhoto, speakerSlug, SPEAKERS, srcSet } from "@/data/site";
 import { Palms, PosterName, Torn } from "@/components/site/Poster";
 import { useIntroDone } from "@/components/site/intro";
 import { Chars, EASE_OUT, Lines, Magnetic, Marquee, Reveal, RollingNumber, ScrollWords, useCountdown } from "@/components/site/motion";
@@ -29,8 +29,27 @@ function Hero() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const collageY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
+  const fade = useTransform(scrollYProgress, [0.55, 0.95], [1, 0]);
   const { days, hours, minutes, seconds } = useCountdown(EVENT.dateISO);
+  const [current, setCurrent] = useState(0);
+  const swipe = useRef(0);
+  const go = (d: number) => setCurrent((c) => (c + d + SPEAKERS.length) % SPEAKERS.length);
+  const s = SPEAKERS[current];
+
+  // rotate speakers every 4s (restarts after a manual change)
+  useEffect(() => {
+    if (!ready || reduce) return;
+    const t = window.setTimeout(() => setCurrent((c) => (c + 1) % SPEAKERS.length), 4000);
+    return () => window.clearTimeout(t);
+  }, [ready, reduce, current]);
+
+  // preload all portraits so swaps are instant
+  useEffect(() => {
+    SPEAKERS.forEach((x) => {
+      const im = new Image();
+      im.src = speakerPhoto(x.photo);
+    });
+  }, []);
 
   // pointer depth for the collage layers
   const px = useMotionValue(0);
@@ -124,20 +143,51 @@ function Hero() {
             <motion.div style={d4} className="hc-palms-wrap" aria-hidden>
               <Palms className="hc-palms" />
             </motion.div>
-            <div className="hc-frame">
-              <motion.img
-                src={img("stage", 1000)}
-                alt="A theatre stage under a red spotlight"
-                initial={{ scale: 1.25 }}
-                animate={ready ? { scale: 1 } : undefined}
-                transition={{ duration: 3.2, delay: 0.3, ease: EASE_OUT }}
-              />
+            <div
+              className="hc-frame"
+              onClick={() => go(1)}
+              onPointerDown={(e) => (swipe.current = e.clientX)}
+              onPointerUp={(e) => {
+                const dx = e.clientX - swipe.current;
+                if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+              }}
+              data-cursor="Next"
+            >
+              <AnimatePresence initial={false}>
+                <motion.img
+                  key={s.photo}
+                  src={speakerPhoto(s.photo)}
+                  alt={`${s.first} ${s.last}, ${s.label}`}
+                  draggable={false}
+                  initial={{ opacity: 0, scale: 1.08 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, transition: { duration: 0.6, delay: 0.3 } }}
+                  transition={{ opacity: { duration: 0.9, ease: "easeOut" }, scale: { duration: 2.4, ease: EASE_OUT } }}
+                />
+              </AnimatePresence>
               <Torn side="bottom" seed={5} className="hc-torn" />
             </div>
-            <div className="hc-caption">
-              <span className="script">Save the date</span>
-              <PosterName first="15 November" last="2026" />
-              <span className="mono hc-venue">{EVENT.venue}</span>
+            <div className="hc-caption" aria-live="polite">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={s.photo} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE_OUT }}>
+                  <span className="script">Meet Our {s.label}</span>
+                  <PosterName first={s.first} last={s.last} />
+                </motion.div>
+              </AnimatePresence>
+              <div className="hc-progress" role="tablist" aria-label="Speakers">
+                {SPEAKERS.map((x, i) => (
+                  <button
+                    key={x.photo}
+                    role="tab"
+                    aria-selected={i === current}
+                    aria-label={`${x.first} ${x.last}`}
+                    className={i === current ? "is-on" : i < current ? "is-done" : ""}
+                    onClick={() => setCurrent(i)}
+                  >
+                    <i key={i === current ? `on-${current}` : "off"} />
+                  </button>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
