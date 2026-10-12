@@ -67,11 +67,11 @@ export default function Agenda() {
           <Reveal>
             <p className="lead-copy">Register your intent now and you will be the first to know when the agenda is declassified.</p>
             <div className="row-gap">
-              <Link className="btn btn-red" href="/register" data-cursor="Join">
+              <a className="btn btn-red" href={EVENT.registerUrl} data-cursor="Join">
                 <span className="btn-fill" />
                 <span className="btn-label">Register</span>
                 <ArrowUpRight size={16} />
-              </Link>
+              </a>
               <Link className="btn-link mono" href="/contact">
                 Ask a question <ArrowUpRight size={14} />
               </Link>

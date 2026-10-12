@@ -13,6 +13,7 @@ export const EVENT = {
   city: "Sfax, Tunisia",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Centre+Culturel+Mohamed+Jammoussi+Sfax&query_place_id=ChIJ52Yp69QsABMRKLAWhVbRv0A",
   mapsEmbed: "https://maps.google.com/maps?q=34.73675,10.75068&z=16&output=embed",
+  registerUrl: "https://register.tedxthyna.com",
   email: "affes.zied@tedxthyna.com",
   instagram: "https://www.instagram.com/tedxthyna/",
   linkedin: "https://www.linkedin.com/m/company/tedxthyna-youth/",
@@ -22,7 +23,7 @@ export type NavItem = { label: string; href: string; code: string };
 
 export const NAV: NavItem[] = [
   { label: "Mission", href: "/mission", code: "02" },
-  { label: "The Voices", href: "/minds", code: "03" },
+  { label: "Speakers", href: "/speakers", code: "03" },
   { label: "Organization", href: "/organization", code: "04" },
   { label: "The Scene", href: "/scene", code: "05" },
   { label: "Agenda", href: "/agenda", code: "06" },
@@ -31,9 +32,7 @@ export const NAV: NavItem[] = [
 
 /** Order of files when visitors move "to the next file" at the bottom of each page. */
 export const FILE_ORDER: NavItem[] = [
-  ...NAV.slice(0, 5),
-  { label: "Register", href: "/register", code: "08" },
-  NAV[5],
+  ...NAV,
 ];
 
 export const TEAM = [
@@ -56,10 +55,10 @@ export const FILES = [
   },
   {
     code: "02",
-    tag: "The Voices",
+    tag: "The Speakers",
     title: "Who holds the mic",
-    question: "Who is behind the story?",
-    href: "/minds",
+    question: "Ten voices, one stage.",
+    href: "/speakers",
     image: "jihed",
   },
   {
@@ -109,6 +108,8 @@ export const ROLE_TAGLINE: Record<Role, [string, string]> = {
   Panelist: ["Multiple Voices", "One Direction"],
   Moderator: ["Guiding the Conversation", "Connecting Voices"],
 };
+
+export const speakerSlug = (s: { first: string; last: string }) => `${s.first}-${s.last}`.toLowerCase().replace(/\s+/g, "-");
 
 export const speakerPhoto = (photo: string) => `/media/speakers/${photo}.webp`;
 

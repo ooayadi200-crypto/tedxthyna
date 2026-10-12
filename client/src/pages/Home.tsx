@@ -2,8 +2,7 @@ import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReduce
 import { ArrowDownRight, ArrowUpRight, MapPin } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
-import { EVENT, FILES, img, speakerPhoto, SPEAKERS, srcSet } from "@/data/site";
-import { Lineup } from "@/components/site/Lineup";
+import { EVENT, FILES, img, speakerSlug, SPEAKERS, srcSet } from "@/data/site";
 import { Palms, PosterName, Torn } from "@/components/site/Poster";
 import { useIntroDone } from "@/components/site/intro";
 import { Chars, EASE_OUT, Lines, Magnetic, Marquee, Reveal, RollingNumber, ScrollWords, useCountdown } from "@/components/site/motion";
@@ -27,7 +26,6 @@ function Hero() {
   const ready = useIntroDone();
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const [current, setCurrent] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const collageY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
@@ -45,13 +43,6 @@ function Hero() {
   const d3 = depth(-30);
   const d4 = depth(10);
 
-  useEffect(() => {
-    if (!ready || reduce) return;
-    const t = window.setInterval(() => setCurrent((c) => (c + 1) % SPEAKERS.length), 3200);
-    return () => window.clearInterval(t);
-  }, [ready, reduce]);
-
-  const s = SPEAKERS[current];
 
   return (
     <section
@@ -109,15 +100,15 @@ function Hero() {
               </p>
               <div className="hero-ctas">
                 <Magnetic>
-                  <Link href="/register" className="btn btn-red" data-cursor="Join">
+                  <a href={EVENT.registerUrl} className="btn btn-red" data-cursor="Join">
                     <span className="btn-fill" />
                     <span className="btn-label">Claim your seat</span>
                     <ArrowUpRight size={16} />
-                  </Link>
+                  </a>
                 </Magnetic>
-                <a href="#lineup" className="btn-link mono">
-                  Meet the voices <ArrowDownRight size={14} />
-                </a>
+                <Link href="/speakers" className="btn-link mono">
+                  Meet the speakers <ArrowUpRight size={14} />
+                </Link>
               </div>
             </motion.div>
           </motion.div>
@@ -134,32 +125,19 @@ function Hero() {
               <Palms className="hc-palms" />
             </motion.div>
             <div className="hc-frame">
-              <AnimatePresence initial={false}>
-                <motion.img
-                  key={s.photo}
-                  src={speakerPhoto(s.photo)}
-                  alt={`${s.first} ${s.last}, ${s.label}`}
-                  initial={{ opacity: 0, scale: 1.12 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, transition: { delay: 0.55, duration: 0 } }}
-                  transition={{ opacity: { delay: 0.5, duration: 0 }, scale: { delay: 0.5, duration: 1.4, ease: EASE_OUT } }}
-                />
-              </AnimatePresence>
-              <span className="hc-wipe" key={`w-${s.photo}`} aria-hidden />
+              <motion.img
+                src={img("stage", 1000)}
+                alt="A theatre stage under a red spotlight"
+                initial={{ scale: 1.25 }}
+                animate={ready ? { scale: 1 } : undefined}
+                transition={{ duration: 3.2, delay: 0.3, ease: EASE_OUT }}
+              />
               <Torn side="bottom" seed={5} className="hc-torn" />
             </div>
-            <div className="hc-caption" aria-live="polite">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={s.photo} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45 }}>
-                  <span className="script">Meet Our {s.role}</span>
-                  <PosterName first={s.first} last={s.last} />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            <div className="hc-dots" aria-hidden>
-              {SPEAKERS.map((x, i) => (
-                <i key={x.photo} className={i === current ? "is-on" : ""} />
-              ))}
+            <div className="hc-caption">
+              <span className="script">Save the date</span>
+              <PosterName first="15 November" last="2026" />
+              <span className="mono hc-venue">{EVENT.venue}</span>
             </div>
           </motion.div>
         </div>
@@ -225,7 +203,6 @@ function Brief() {
     <section ref={ref} id="brief" className="brief section theme-paper">
       <div className="brief-head">
         <Kicker code="01">The brief</Kicker>
-        <motion.img src="/media/mark.webp" alt="" className="brief-mark" style={{ rotate }} aria-hidden />
       </div>
       <ScrollWords
         className="brief-text"
@@ -340,11 +317,11 @@ function EvidenceBoard() {
           ))}
           <div className="board-end">
             <span className="mono">End of board</span>
-            <Link href="/register" className="board-end-link" data-cursor="Join">
+            <a href={EVENT.registerUrl} className="board-end-link" data-cursor="Join">
               Join the<br />
               <em>operation</em>
               <ArrowUpRight />
-            </Link>
+            </a>
           </div>
         </motion.div>
         {pin && (
@@ -358,59 +335,43 @@ function EvidenceBoard() {
   );
 }
 
-/* ───────────────────────── 05 · THE VOICE ───────────────────────── */
+/* ───────────────────────── 05 · VOICES TEASER ───────────────────────── */
 
-function Voice() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const nameX = useTransform(scrollYProgress, [0, 1], ["8%", "-38%"]);
-  const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+function VoicesTeaser() {
   return (
-    <section ref={ref} className="voice section">
-      <motion.div className="voice-name" style={{ x: nameX }} aria-hidden>
-        Jihed <em>Cherni</em> — Jihed <em>Cherni</em>
-      </motion.div>
-      <div className="voice-grid">
-        <motion.div
-          className="voice-photo"
-          initial={{ clipPath: "inset(100% 0% 0% 0%)" }}
-          whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-          viewport={{ once: true, margin: "-15% 0px" }}
-          transition={{ duration: 1.4, ease: EASE_OUT }}
-          data-cursor="Moderator"
-        >
-          <motion.img src={img("jihed", 1000)} alt="Jihed Cherni, TEDx Thyna moderator" style={{ y: imgY }} loading="lazy" />
-          <span className="voice-tag mono">Moderator file / confirmed</span>
-        </motion.div>
-        <div className="voice-copy">
-          <Kicker code="03">The voice</Kicker>
-          <Lines as="h2" className="display">
-            {["The voice that"]}
-            {["guides the"]}
-            {[<em key="c">conversation.</em>]}
+    <section className="teaser section theme-paper">
+      <div className="teaser-head">
+        <div>
+          <span className="script lineup-script">Meet Our</span>
+          <Lines as="h2" className="display lineup-title">
+            <span>Ten voices,</span>
+            <em>one stage.</em>
           </Lines>
-          <Reveal>
-            <h3 className="voice-person">Jihed Cherni</h3>
-            <p className="voice-role mono red">Event moderator</p>
-            <p>
-              Tunisian actor, screenwriter and media producer. Jihed Cherni will guide the conversation and connect the voices on the TEDx Thyna stage.
-            </p>
-            <Link href="/minds" className="btn-link mono" data-cursor="Open">
-              Meet the voices <ArrowUpRight size={14} />
+        </div>
+        <Reveal className="teaser-side">
+          <p>Five speakers, three panelists and two moderators. Each one has a story that breaks a pattern — discover them one by one.</p>
+          <Magnetic>
+            <Link href="/speakers" className="btn btn-red" data-cursor="Meet">
+              <span className="btn-fill" />
+              <span className="btn-label">Discover the speakers</span>
+              <ArrowUpRight size={16} />
+            </Link>
+          </Magnetic>
+        </Reveal>
+      </div>
+      <ul className="credits">
+        {SPEAKERS.map((x, i) => (
+          <Reveal as="li" key={x.photo} delay={(i % 5) * 0.05}>
+            <Link href={`/speakers#${speakerSlug(x)}`} className="credit" data-cursor="Read">
+              <span className="credit-name">
+                <i>{x.first}</i> {x.last}
+              </span>
+              <small className="mono">{x.label}</small>
             </Link>
           </Reveal>
-          <div className="panel-list" aria-label="Discussion panel">
-            <span className="mono panel-list-label">The panel — Multiple voices, one direction</span>
-            {SPEAKERS.filter((x) => x.role === "Panelist" || x.label.startsWith("Discussion")).map((x, i) => (
-              <Reveal key={x.photo} delay={i * 0.08} className="panel-row">
-                <img src={speakerPhoto(x.photo)} alt="" loading="lazy" />
-                <PosterName first={x.first} last={x.last} className="is-row" />
-                <span className="mono red">{x.role === "Moderator" ? "Panel moderator" : x.role}</span>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </div>
+        ))}
+      </ul>
+      <Torn side="under" seed={21} />
     </section>
   );
 }
@@ -523,7 +484,7 @@ function FinalCall() {
           </Link>
         </Reveal>
         <Magnetic strength={0.4}>
-          <Link href="/register" className="ring-btn" data-cursor="Join" aria-label="Register for TEDx Thyna">
+          <a href={EVENT.registerUrl} className="ring-btn" data-cursor="Join" aria-label="Register for TEDx Thyna">
             <svg viewBox="0 0 200 200" className="ring-text" aria-hidden>
               <defs>
                 <path id="ring-path" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
@@ -537,7 +498,7 @@ function FinalCall() {
             <span className="ring-core">
               <ArrowUpRight size={34} />
             </span>
-          </Link>
+          </a>
         </Magnetic>
       </div>
     </section>
@@ -551,9 +512,8 @@ export default function Home() {
         <Hero />
         <Tapes />
         <Brief />
-        <Lineup />
+        <VoicesTeaser />
         <EvidenceBoard />
-        <Voice />
         <Scene />
         <Clock />
         <FinalCall />

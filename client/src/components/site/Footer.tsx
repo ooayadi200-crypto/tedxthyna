@@ -10,7 +10,7 @@ export function Footer() {
   const lenis = useLenis();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const y = useTransform(scrollYProgress, [0, 1], ["40%", "0%"]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [-90, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.6, 1]);
 
   const toTop = () => (lenis ? lenis.scrollTo(0, { duration: 2 }) : window.scrollTo({ top: 0, behavior: "smooth" }));
 
@@ -43,7 +43,7 @@ export function Footer() {
             <a href={EVENT.linkedin} target="_blank" rel="noreferrer">
               LinkedIn
             </a>
-            <Link href="/register">Register</Link>
+            <a href={EVENT.registerUrl}>Register</a>
           </div>
           <div>
             <span className="mono">Location</span>
@@ -59,7 +59,7 @@ export function Footer() {
       </div>
 
       <div className="footer-giant" aria-hidden>
-        <motion.img src="/media/mark-512.png" alt="" className="footer-mark" style={{ rotate }} />
+        <motion.img src="/media/logo.png" alt="" className="footer-mark" style={{ scale }} />
         <motion.span style={{ y }}>THYNA</motion.span>
       </div>
 

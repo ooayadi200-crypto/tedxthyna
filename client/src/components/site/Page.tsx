@@ -27,7 +27,7 @@ export function Page({ title, children, footer = true }: { title: string; childr
           exit: { scaleY: 1, transformOrigin: "50% 100%", transition: { duration: 0.65, ease: EASE } },
         }}
       >
-        <img src="/media/mark-512.png" alt="" />
+        <img src="/media/logo.png" alt="" />
       </motion.div>
       {children}
       {footer && <Footer />}

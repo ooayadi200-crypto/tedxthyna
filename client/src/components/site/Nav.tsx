@@ -7,7 +7,7 @@ import { EASE, EASE_OUT } from "./motion";
 
 const MENU_IMAGES: Record<string, string> = {
   "/mission": "dossier",
-  "/minds": "jihed",
+  "/speakers": "jihed",
   "/organization": "board",
   "/scene": "stage",
   "/agenda": "desk",
@@ -61,10 +61,10 @@ export function Nav() {
         </Link>
         <SfaxClock />
         <div className="nav-actions">
-          <Link href="/register" className="nav-register" data-cursor="Join">
+          <a href={EVENT.registerUrl} className="nav-register" data-cursor="Join">
             <span>Register</span>
             <ArrowUpRight size={15} />
-          </Link>
+          </a>
           <button className="nav-burger" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="site-menu" aria-label={open ? "Close menu" : "Open menu"}>
             <span className="mono">{open ? "Close" : "Menu"}</span>
             <span className="burger-lines">

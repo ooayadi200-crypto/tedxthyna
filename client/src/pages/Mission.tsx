@@ -11,7 +11,7 @@ const PILLARS = [
     code: "A",
     title: "The ideas",
     body: "Questions that refuse to stay quiet. Talks that leave a trace long after the lights go down.",
-    href: "/minds",
+    href: "/speakers",
     link: "Meet the voices",
   },
   {

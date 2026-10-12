@@ -8,13 +8,21 @@ import { Nav } from "./components/site/Nav";
 import { Preloader } from "./components/site/Preloader";
 import { SmoothScroll } from "./components/site/SmoothScroll";
 import Home from "./pages/Home";
+import { EVENT } from "./data/site";
+import { useEffect } from "react";
+
+function RegisterRedirect() {
+  useEffect(() => {
+    window.location.replace(EVENT.registerUrl);
+  }, []);
+  return <div className="page-fallback" />;
+}
 
 const Mission = lazy(() => import("./pages/Mission"));
-const Voices = lazy(() => import("./pages/Voices"));
+const Speakers = lazy(() => import("./pages/Speakers"));
 const Organization = lazy(() => import("./pages/Organization"));
 const Scene = lazy(() => import("./pages/Scene"));
 const Agenda = lazy(() => import("./pages/Agenda"));
-const Register = lazy(() => import("./pages/Register"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -38,12 +46,13 @@ function Routes() {
         <Switch location={location}>
           <Route path="/" component={Home} />
           <Route path="/mission" component={Mission} />
-          <Route path="/minds" component={Voices} />
-          <Route path="/voices" component={Voices} />
+          <Route path="/speakers" component={Speakers} />
+          <Route path="/minds" component={Speakers} />
+          <Route path="/voices" component={Speakers} />
           <Route path="/organization" component={Organization} />
           <Route path="/scene" component={Scene} />
           <Route path="/agenda" component={Agenda} />
-          <Route path="/register" component={Register} />
+          <Route path="/register" component={RegisterRedirect} />
           <Route path="/contact" component={Contact} />
           <Route component={NotFound} />
         </Switch>

@@ -2,9 +2,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { EASE, EASE_OUT } from "./motion";
 
-const STATUS = ["Locating file", "Decrypting archive", "Cross-referencing witnesses", "Access granted"];
+const STATUS = ["Setting the stage", "Gathering the voices", "Dimming the lights", "Curtain up"];
 
-/** Cinematic opening: counter, spinning compass seal, then the screen splits like a theatre curtain. */
+/** Cinematic opening: counter and logo, then the screen splits like a theatre curtain. */
 export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: () => void }) {
   const [progress, setProgress] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -43,7 +43,7 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
   const status = STATUS[Math.min(STATUS.length - 1, Math.floor(progress / 26))];
 
   return (
-    <div className="preloader" aria-label="Opening the TEDx Thyna case file" role="status">
+    <div className="preloader" aria-label="Loading TEDx Thyna Youth" role="status">
       <motion.div
         className="preloader-panel is-top"
         animate={leaving ? { y: "-100%" } : { y: 0 }}
@@ -59,7 +59,7 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
       <AnimatePresence>
         {!leaving && (
           <motion.div className="preloader-content" exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-            <div className="preloader-corner is-tl mono">TEDx Thyna Youth<br />Case file / TX-026</div>
+            <div className="preloader-corner is-tl mono">TEDx Thyna Youth<br />15.11.2026 — Break the pattern</div>
             <div className="preloader-corner is-tr mono">Sfax / Tunisia<br />34.74° N — 10.76° E</div>
             <div className="preloader-corner is-bl mono">
               <span className="blink-dot" /> {status}
@@ -69,11 +69,11 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
             </button>
 
             <motion.img
-              src="/media/mark-512.png"
+              src="/media/logo.png"
               alt=""
               className="preloader-mark"
-              initial={{ scale: 0.4, rotate: -180, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1.8, ease: EASE_OUT }}
             />
             <div className="preloader-count">
