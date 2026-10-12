@@ -81,7 +81,7 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
               <small>%</small>
             </div>
             <motion.p className="preloader-line" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
-              The investigation <em>begins.</em>
+              Break the <em>pattern.</em>
             </motion.p>
           </motion.div>
         )}

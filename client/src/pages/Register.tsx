@@ -52,7 +52,7 @@ function Ticket({ name, profile }: { name: string; profile: string }) {
             </div>
             <div>
               <span className="mono">Venue</span>
-              <b>Théâtre Mun.</b>
+              <b>C.C. Jamoussi</b>
             </div>
             <div>
               <span className="mono">Profile</span>

@@ -5,7 +5,7 @@ import { Kicker, NextFile, Page, PageHero } from "@/components/site/Page";
 
 export default function Scene() {
   return (
-    <Page title="The Scene — Théâtre Municipal de Sfax · TEDx Thyna">
+    <Page title="The Scene — Complexe Culturel Mohamed Jamoussi · TEDx Thyna">
       <PageHero
         code="05"
         label="The scene"
@@ -24,18 +24,19 @@ export default function Scene() {
       <main>
         <section className="section venue">
           <div className="venue-copy">
-            <Kicker code="05.1">Operation site / identified</Kicker>
+            <Kicker code="05.1">Venue / confirmed</Kicker>
             <Lines as="h2" className="display venue-title">
-              <span>Théâtre</span>
-              <em>Municipal</em>
-              <span>de Sfax</span>
+              <span>Complexe</span>
+              <em>Culturel</em>
+              <span>Mohamed</span>
+              <span>Jamoussi</span>
             </Lines>
             <Reveal>
               <dl className="dossier-list">
                 <div>
                   <dt className="mono">Address</dt>
                   <dd>
-                    {EVENT.plusCode} — {EVENT.city}
+                    {EVENT.address}, Tunisia
                   </dd>
                 </div>
                 <div>
@@ -56,8 +57,8 @@ export default function Scene() {
           </div>
           <Reveal className="venue-map">
             <iframe
-              title="Map of the Théâtre Municipal de Sfax"
-              src="https://maps.google.com/maps?q=Th%C3%A9%C3%A2tre%20Municipal%20de%20Sfax&z=16&output=embed"
+              title="Map of the Complexe Culturel Mohamed Jamoussi, Sfax"
+              src={EVENT.mapsEmbed}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
@@ -81,7 +82,7 @@ export default function Scene() {
               </span>
             </Lines>
             <Reveal>
-              <p className="lead-copy">A city of makers, traders and builders. For one day in November, its theatre becomes the place where its boldest ideas take the stage.</p>
+              <p className="lead-copy">A city of makers, traders and builders. For one day in November, the Jamoussi cultural complex becomes the place where its boldest ideas take the stage.</p>
             </Reveal>
           </div>
         </section>

@@ -24,7 +24,7 @@ const PILLARS = [
   {
     code: "C",
     title: "The place",
-    body: "A historic theatre in the heart of the city, ready to receive the next signal.",
+    body: "The Complexe Culturel Mohamed Jamoussi, a cultural landmark of Sfax, ready to receive the next signal.",
     href: "/scene",
     link: "Visit the scene",
   },

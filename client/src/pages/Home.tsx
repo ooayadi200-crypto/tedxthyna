@@ -1,8 +1,10 @@
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, MapPin } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
-import { EVENT, FILES, img, srcSet } from "@/data/site";
+import { EVENT, FILES, img, speakerPhoto, SPEAKERS, srcSet } from "@/data/site";
+import { Lineup } from "@/components/site/Lineup";
+import { Palms, PosterName, Torn } from "@/components/site/Poster";
 import { useIntroDone } from "@/components/site/intro";
 import { Chars, EASE_OUT, Lines, Magnetic, Marquee, Reveal, RollingNumber, ScrollWords, useCountdown } from "@/components/site/motion";
 import { Kicker, Page } from "@/components/site/Page";
@@ -25,104 +27,167 @@ function Hero() {
   const ready = useIntroDone();
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const [current, setCurrent] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const titleScale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const collageY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
+  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
   const { days, hours, minutes, seconds } = useCountdown(EVENT.dateISO);
 
-  const onMove = (e: React.PointerEvent<HTMLElement>) => {
-    if (reduce || e.pointerType !== "mouse" || !ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    ref.current.style.setProperty("--sx", `${((e.clientX - r.left) / r.width) * 100}%`);
-    ref.current.style.setProperty("--sy", `${((e.clientY - r.top) / r.height) * 100}%`);
-    ref.current.classList.add("is-tracking");
-  };
+  // pointer depth for the collage layers
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const sx = useSpring(px, { stiffness: 60, damping: 18 });
+  const sy = useSpring(py, { stiffness: 60, damping: 18 });
+  const depth = (k: number) => ({ x: useTransform(sx, (v) => v * k), y: useTransform(sy, (v) => v * k) });
+  const d1 = depth(-14);
+  const d2 = depth(22);
+  const d3 = depth(-30);
+  const d4 = depth(10);
+
+  useEffect(() => {
+    if (!ready || reduce) return;
+    const t = window.setInterval(() => setCurrent((c) => (c + 1) % SPEAKERS.length), 3200);
+    return () => window.clearInterval(t);
+  }, [ready, reduce]);
+
+  const s = SPEAKERS[current];
 
   return (
-    <section ref={ref} className="hero" onPointerMove={onMove} onPointerLeave={() => ref.current?.classList.remove("is-tracking")}>
-      <motion.div className="hero-media" style={{ scale: bgScale }}>
-        <img className="hero-img is-dark" src={img("curtain")} srcSet={srcSet("curtain")} sizes="100vw" alt="" fetchPriority="high" />
-        <img className="hero-img is-lit" src={img("curtain")} srcSet={srcSet("curtain")} sizes="100vw" alt="" aria-hidden />
-      </motion.div>
-      <div className="hero-vignette" />
-      <div className="hero-grid" aria-hidden />
-      <motion.div
-        className="hero-mark-wrap"
-        aria-hidden
-        initial={{ opacity: 0, rotate: -40, scale: 0.8 }}
-        animate={ready ? { opacity: 1, rotate: 0, scale: 1 } : undefined}
-        transition={{ duration: 2.4, ease: EASE_OUT }}
-      >
-        <img src="/media/mark.webp" alt="" className="hero-mark" />
-      </motion.div>
+    <section
+      ref={ref}
+      className="hero theme-paper"
+      onPointerMove={(e) => {
+        if (reduce || e.pointerType !== "mouse") return;
+        px.set(e.clientX / window.innerWidth - 0.5);
+        py.set(e.clientY / window.innerHeight - 0.5);
+      }}
+    >
+      <svg className="hero-arc" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden>
+        <motion.path
+          d="M-40 520 C 300 420, 620 760, 980 600 S 1380 380, 1500 460"
+          initial={{ pathLength: 0 }}
+          animate={ready ? { pathLength: 1 } : undefined}
+          transition={{ duration: 2.4, delay: 0.6, ease: EASE_OUT }}
+        />
+        <motion.path
+          d="M-40 760 C 400 700, 700 860, 1100 760 S 1400 700, 1500 720"
+          initial={{ pathLength: 0 }}
+          animate={ready ? { pathLength: 1 } : undefined}
+          transition={{ duration: 2.4, delay: 0.9, ease: EASE_OUT }}
+        />
+      </svg>
 
       <motion.div className="hero-content" style={{ opacity: fade }}>
         <motion.div className="hero-top mono" initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : undefined} transition={{ delay: 0.9, duration: 1 }}>
           <span>
-            <i className="blink-dot" /> Case Nº {EVENT.caseNo} — status: active
+            <i className="blink-dot" /> TEDx Thyna Youth — 2026 edition
           </span>
-          <span className="hide-sm">Clearance: open</span>
+          <span className="hide-sm">{EVENT.venueShort}</span>
           <span>{EVENT.dateShort}</span>
         </motion.div>
 
-        <motion.h1 className="hero-title" style={{ y: titleY, scale: titleScale }}>
-          <span className="hero-title-row">
-            <Chars text="THE CASE" play={ready} delay={0.15} />
-          </span>
-          <span className="hero-title-row is-indent">
-            <Chars text="IS" play={ready} delay={0.45} className="is-outline" />
-            <span className="hero-title-em">
-              <Chars text="open." play={ready} delay={0.55} />
-            </span>
-          </span>
-        </motion.h1>
-
-        <div className="hero-bottom">
-          <motion.div className="hero-intro" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : undefined} transition={{ delay: 1.1, duration: 1.1, ease: EASE_OUT }}>
-            <p>
-              Some stories are meant to be discovered. Some questions are meant to be asked. On <b>{EVENT.dateLabel}</b>, Sfax opens the file.
-            </p>
-            <div className="hero-ctas">
-              <Magnetic>
-                <Link href="/register" className="btn btn-red" data-cursor="Join">
-                  <span className="btn-fill" />
-                  <span className="btn-label">Claim your seat</span>
-                  <ArrowUpRight size={16} />
-                </Link>
-              </Magnetic>
-              <a href="#brief" className="btn-link mono">
-                Enter the investigation <ArrowDownRight size={14} />
-              </a>
-            </div>
+        <div className="hero-grid-main">
+          <motion.div className="hero-copy" style={{ y: titleY }}>
+            <motion.span className="script hero-script" initial={{ opacity: 0, x: -20 }} animate={ready ? { opacity: 1, x: 0 } : undefined} transition={{ delay: 0.2, duration: 1.2, ease: EASE_OUT }}>
+              This year&apos;s theme
+            </motion.span>
+            <h1 className="hero-title" aria-label="Break the Pattern">
+              <span className="ht-row ht-break">
+                <Chars text="Break" play={ready} delay={0.25} stagger={0.06} />
+              </span>
+              <span className="ht-row ht-pattern">
+                <span className="ht-the">
+                  <Chars text="The" play={ready} delay={0.55} />
+                </span>
+                <Chars text="Pattern" play={ready} delay={0.65} stagger={0.05} />
+              </span>
+            </h1>
+            <motion.div className="hero-intro" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : undefined} transition={{ delay: 1.1, duration: 1.1, ease: EASE_OUT }}>
+              <p>
+                Ten voices. One stage. On <b>{EVENT.dateLabel}</b>, Sfax gathers at the {EVENT.venue} to question what we take for granted.
+              </p>
+              <div className="hero-ctas">
+                <Magnetic>
+                  <Link href="/register" className="btn btn-red" data-cursor="Join">
+                    <span className="btn-fill" />
+                    <span className="btn-label">Claim your seat</span>
+                    <ArrowUpRight size={16} />
+                  </Link>
+                </Magnetic>
+                <a href="#lineup" className="btn-link mono">
+                  Meet the voices <ArrowDownRight size={14} />
+                </a>
+              </div>
+            </motion.div>
           </motion.div>
 
-          <motion.div className="hero-count" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : undefined} transition={{ delay: 1.3, duration: 1.1, ease: EASE_OUT }} aria-label={`${days} days, ${hours} hours, ${minutes} minutes until TEDx Thyna`}>
-            <span className="mono hero-count-label">Countdown to curtain-up</span>
-            <div className="hero-count-units" aria-hidden>
-              {[
-                [days, "Days", 3],
-                [hours, "Hrs", 2],
-                [minutes, "Min", 2],
-                [seconds, "Sec", 2],
-              ].map(([v, l, p]) => (
-                <div key={l as string}>
-                  <RollingNumber value={v as number} pad={days > 99 && l === "Days" ? (p as number) : 2} />
-                  <small className="mono">{l}</small>
-                </div>
+          <motion.div className="hero-collage" style={{ y: collageY }} initial={{ opacity: 0, scale: 0.92, rotate: 3 }} animate={ready ? { opacity: 1, scale: 1, rotate: 0 } : undefined} transition={{ duration: 1.6, delay: 0.3, ease: EASE_OUT }}>
+            <motion.div className="hc-city" style={d1}>
+              <img src={img("sfax", 1000)} alt="" />
+              <Torn side="bottom" seed={11} />
+            </motion.div>
+            <motion.span className="hc-block is-dark" style={d2} aria-hidden />
+            <motion.span className="hc-block is-red" style={d3} aria-hidden />
+            <motion.span className="hc-block is-red-sm" style={d1} aria-hidden />
+            <motion.div style={d4} className="hc-palms-wrap" aria-hidden>
+              <Palms className="hc-palms" />
+            </motion.div>
+            <div className="hc-frame">
+              <AnimatePresence initial={false}>
+                <motion.img
+                  key={s.photo}
+                  src={speakerPhoto(s.photo)}
+                  alt={`${s.first} ${s.last}, ${s.label}`}
+                  initial={{ opacity: 0, scale: 1.12 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, transition: { delay: 0.55, duration: 0 } }}
+                  transition={{ opacity: { delay: 0.5, duration: 0 }, scale: { delay: 0.5, duration: 1.4, ease: EASE_OUT } }}
+                />
+              </AnimatePresence>
+              <span className="hc-wipe" key={`w-${s.photo}`} aria-hidden />
+              <Torn side="bottom" seed={5} className="hc-torn" />
+            </div>
+            <div className="hc-caption" aria-live="polite">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={s.photo} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45 }}>
+                  <span className="script">Meet Our {s.role}</span>
+                  <PosterName first={s.first} last={s.last} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            <div className="hc-dots" aria-hidden>
+              {SPEAKERS.map((x, i) => (
+                <i key={x.photo} className={i === current ? "is-on" : ""} />
               ))}
             </div>
           </motion.div>
         </div>
+
+        <motion.div className="hero-count" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : undefined} transition={{ delay: 1.3, duration: 1.1, ease: EASE_OUT }} aria-label={`${days} days, ${hours} hours, ${minutes} minutes until TEDx Thyna`}>
+          <span className="mono hero-count-label">Countdown to curtain-up</span>
+          <div className="hero-count-units" aria-hidden>
+            {[
+              [days, "Days"],
+              [hours, "Hrs"],
+              [minutes, "Min"],
+              [seconds, "Sec"],
+            ].map(([v, l]) => (
+              <div key={l as string}>
+                <RollingNumber value={v as number} />
+                <small className="mono">{l}</small>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </motion.div>
 
       <div className="hero-foot mono">
         <span>
-          <MapPin size={12} /> {EVENT.venue}
+          <MapPin size={12} /> {EVENT.venue} · {EVENT.address}
         </span>
         <span className="hero-scroll">
-          <i /> Scroll to discover
+          <i /> Scroll
         </span>
       </div>
     </section>
@@ -136,14 +201,14 @@ function Tapes() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const shift = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const shift2 = useTransform(scrollYProgress, [0, 1], [-200, 0]);
-  const items = ["15.11.2026", "Théâtre Municipal de Sfax", "Ideas worth spreading", "Case Nº TX-026", "The case is open"];
+  const items = ["15.11.2026", "Break the pattern", "Complexe Culturel Mohamed Jamoussi", "Ideas worth spreading", "Sfax"];
   return (
     <div ref={ref} className="tapes" aria-hidden>
       <motion.div className="tape is-red" style={{ x: shift }}>
         <Marquee items={items} speed={38} />
       </motion.div>
       <motion.div className="tape is-paper" style={{ x: shift2 }}>
-        <Marquee items={["Do not cross", "Evidence inside", "Clearance: open", "TEDx Thyna Youth", "Follow the signal"]} reverse speed={44} />
+        <Marquee items={["Sharing ideas", "Shaping perspectives", "Multiple voices", "One direction", "TEDx Thyna Youth"]} reverse speed={44} />
       </motion.div>
     </div>
   );
@@ -157,20 +222,20 @@ function Brief() {
   const rotate = useTransform(scrollYProgress, [0, 1], [-60, 120]);
   const imgY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
   return (
-    <section ref={ref} id="brief" className="brief section">
+    <section ref={ref} id="brief" className="brief section theme-paper">
       <div className="brief-head">
         <Kicker code="01">The brief</Kicker>
         <motion.img src="/media/mark.webp" alt="" className="brief-mark" style={{ rotate }} aria-hidden />
       </div>
       <ScrollWords
         className="brief-text"
-        text="Every great idea begins as a secret worth sharing. This November, Sfax opens the file — and invites the curious, the restless and the bold to follow the questions, the people and the place behind TEDx Thyna."
-        highlight={["secret", "sharing", "curious", "restless", "bold"]}
+        text="Every pattern we live by was once somebody's new idea. This November, Sfax gathers to question them — and invites the curious, the restless and the bold to break a few, together."
+        highlight={["pattern", "new", "idea", "curious", "restless", "bold", "break"]}
       />
       <div className="brief-foot">
         <div className="brief-photo">
           <motion.img src={img("dossier", 1000)} alt="A sealed case file, photographs and a microphone on a desk" style={{ y: imgY }} loading="lazy" />
-          <span className="stamp">Clearance<br />open</span>
+          <span className="stamp">Break the<br />pattern</span>
         </div>
         <Reveal className="brief-copy">
           <p>
@@ -182,9 +247,9 @@ function Brief() {
         </Reveal>
         <div className="brief-stats">
           {[
-            ["01", "Stage"],
-            ["01", "Day"],
-            ["∞", "Questions"],
+            ["05", "Speakers"],
+            ["03", "Panelists"],
+            ["02", "Moderators"],
           ].map(([n, l], i) => (
             <Reveal key={l} delay={i * 0.1} className="brief-stat">
               <b>{n}</b>
@@ -334,12 +399,13 @@ function Voice() {
               Meet the voices <ArrowUpRight size={14} />
             </Link>
           </Reveal>
-          <div className="voice-redacted" aria-label="More speakers to be revealed">
-            {["Speaker 01", "Speaker 02", "Speaker 03"].map((s, i) => (
-              <Reveal key={s} delay={i * 0.08} className="redacted-row">
-                <span className="mono">{s}</span>
-                <span className="redacted-bar" />
-                <span className="mono red">Classified</span>
+          <div className="panel-list" aria-label="Discussion panel">
+            <span className="mono panel-list-label">The panel — Multiple voices, one direction</span>
+            {SPEAKERS.filter((x) => x.role === "Panelist" || x.label.startsWith("Discussion")).map((x, i) => (
+              <Reveal key={x.photo} delay={i * 0.08} className="panel-row">
+                <img src={speakerPhoto(x.photo)} alt="" loading="lazy" />
+                <PosterName first={x.first} last={x.last} className="is-row" />
+                <span className="mono red">{x.role === "Moderator" ? "Panel moderator" : x.role}</span>
               </Reveal>
             ))}
           </div>
@@ -369,15 +435,15 @@ function Scene() {
           </p>
         </motion.div>
         <motion.div className="scene-frame" style={{ clipPath: clip }}>
-          <motion.img src={img("stage")} srcSet={srcSet("stage")} sizes="100vw" alt="The stage of the Théâtre Municipal de Sfax under a red spotlight" style={{ scale }} loading="lazy" />
+          <motion.img src={img("stage")} srcSet={srcSet("stage")} sizes="100vw" alt="A theatre stage under a red spotlight" style={{ scale }} loading="lazy" />
           <div className="scene-shade" />
         </motion.div>
         <motion.div className="scene-copy" style={{ opacity: titleOpacity, y: titleY }}>
-          <span className="mono red">Operation site / identified</span>
+          <span className="mono red">Venue / confirmed</span>
           <h2>
-            Théâtre <em>Municipal</em>
+            Complexe <em>Culturel</em>
             <br />
-            de Sfax
+            Mohamed Jamoussi
           </h2>
           <div className="scene-data">
             <div>
@@ -385,8 +451,8 @@ function Scene() {
               <b>{EVENT.dateLabel}</b>
             </div>
             <div>
-              <span className="mono">Coordinates</span>
-              <b>{EVENT.plusCode} · Sfax</b>
+              <span className="mono">Address</span>
+              <b>{EVENT.address}</b>
             </div>
             <a href={EVENT.mapsUrl} target="_blank" rel="noreferrer" className="btn-link mono" data-cursor="Map">
               Open location <ArrowUpRight size={14} />
@@ -403,7 +469,8 @@ function Scene() {
 function Clock() {
   const { days, hours, minutes, seconds, done } = useCountdown(EVENT.dateISO);
   return (
-    <section className="clock section">
+    <section className="clock section theme-paper">
+      <Torn side="top" seed={33} />
       <Kicker code="05">The clock is running</Kicker>
       <div className="clock-grid" aria-label={done ? "TEDx Thyna is live" : `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds to go`}>
         {[
@@ -421,8 +488,9 @@ function Clock() {
         ))}
       </div>
       <Reveal className="clock-foot">
-        <p>Doors open on {EVENT.dateLabel}. Seats are limited — the file closes when the theatre is full.</p>
+        <p>Doors open on {EVENT.dateLabel}. Seats are limited — registration closes when the hall is full.</p>
       </Reveal>
+      <Torn side="under" seed={41} />
     </section>
   );
 }
@@ -478,11 +546,12 @@ function FinalCall() {
 
 export default function Home() {
   return (
-    <Page title="TEDx Thyna Youth — The Case Is Open · 15.11.2026, Sfax">
+    <Page title="TEDx Thyna Youth 2026 — Break The Pattern · 15.11.2026, Sfax">
       <main>
         <Hero />
         <Tapes />
         <Brief />
+        <Lineup />
         <EvidenceBoard />
         <Voice />
         <Scene />

@@ -51,12 +51,13 @@ export function Nav() {
   return (
     <>
       <motion.header
-        className={`nav ${solid ? "is-solid" : ""} ${open ? "is-open" : ""}`}
+        className={`nav ${solid ? "is-solid" : ""} ${open ? "is-open" : ""} ${location === "/" ? "on-paper" : ""}`}
         animate={{ y: hidden ? "-110%" : "0%" }}
         transition={{ duration: 0.5, ease: EASE }}
       >
         <Link href="/" className="nav-brand" aria-label="TEDx Thyna Youth — home">
-          <img src="/media/wordmark-light.png" alt="TEDx Thyna Youth" width={160} height={27} />
+          <img className="is-light-mark" src="/media/wordmark-light.png" alt="TEDx Thyna Youth" width={160} height={27} />
+          <img className="is-dark-mark" src="/tedx-thyna-wordmark.png" alt="" aria-hidden width={160} height={27} />
         </Link>
         <SfaxClock />
         <div className="nav-actions">
