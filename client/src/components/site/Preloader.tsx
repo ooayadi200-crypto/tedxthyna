@@ -1,30 +1,22 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { EVENT } from "@/data/site";
 import { EASE, EASE_OUT } from "./motion";
+import { Torn } from "./Poster";
 
-const STATUS = ["Setting the stage", "Gathering the voices", "Dimming the lights", "Curtain up"];
-
-/** Cinematic opening: counter and logo, then the screen splits like a theatre curtain. */
+/**
+ * Short, on-brand opening (≈1.2s): the poster's paper, the official logo and the
+ * theme "Break The Pattern", then the page tears open to reveal the site.
+ * It never waits on a fake counter — it leaves as soon as the page is ready.
+ */
 export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: () => void }) {
-  const [progress, setProgress] = useState(0);
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("is-locked");
-    let raf = 0;
-    const start = performance.now();
-    const duration = 1300;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      // stuttering progress, like a file being pieced together
-      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      setProgress(Math.round(eased * 100));
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else window.setTimeout(() => setLeaving(true), 120);
-    };
-    raf = requestAnimationFrame(tick);
+    const t = window.setTimeout(() => setLeaving(true), 1150);
     return () => {
-      cancelAnimationFrame(raf);
+      window.clearTimeout(t);
       document.documentElement.classList.remove("is-locked");
     };
   }, []);
@@ -32,60 +24,53 @@ export function Preloader({ onReveal, onDone }: { onReveal: () => void; onDone: 
   useEffect(() => {
     if (!leaving) return;
     document.documentElement.classList.remove("is-locked");
-    const r = window.setTimeout(onReveal, 250);
-    const t = window.setTimeout(onDone, 1000);
+    const r = window.setTimeout(onReveal, 150);
+    const t = window.setTimeout(onDone, 800);
     return () => {
       window.clearTimeout(r);
       window.clearTimeout(t);
     };
   }, [leaving, onDone, onReveal]);
 
-  const status = STATUS[Math.min(STATUS.length - 1, Math.floor(progress / 26))];
+  const words = ["Break", "The", "Pattern"];
 
   return (
-    <div className="preloader" aria-label="Loading TEDx Thyna Youth" role="status">
-      <motion.div
-        className="preloader-panel is-top"
-        animate={leaving ? { y: "-100%" } : { y: 0 }}
-        transition={{ duration: 0.8, ease: EASE, delay: 0.05 }}
-      />
-      <motion.div
-        className="preloader-panel is-bottom"
-        animate={leaving ? { y: "100%" } : { y: 0 }}
-        transition={{ duration: 0.8, ease: EASE, delay: 0.05 }}
-      />
-      <motion.div className="preloader-seam" initial={{ scaleX: 0 }} animate={leaving ? { scaleX: 1, opacity: [1, 1, 0] } : { scaleX: progress / 100 }} transition={leaving ? { duration: 0.9, ease: EASE } : { duration: 0.2 }} />
+    <div className="intro" aria-label="TEDx Thyna Youth — Break The Pattern" role="status" onClick={() => setLeaving(true)}>
+      <motion.div className="intro-half is-top" animate={leaving ? { y: "-105%", rotate: -1.5 } : { y: 0 }} transition={{ duration: 0.75, ease: EASE }}>
+        <Torn side="bottom" seed={9} className="intro-tear" color="var(--surface-paper)" />
+      </motion.div>
+      <motion.div className="intro-half is-bottom" animate={leaving ? { y: "105%", rotate: 1.5 } : { y: 0 }} transition={{ duration: 0.75, ease: EASE }}>
+        <Torn side="top" seed={9} className="intro-tear" color="var(--surface-paper)" />
+      </motion.div>
 
-      <AnimatePresence>
-        {!leaving && (
-          <motion.div className="preloader-content" exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}>
-            <div className="preloader-corner is-tl mono">TEDx Thyna Youth<br />15.11.2026 — Break the pattern</div>
-            <div className="preloader-corner is-tr mono">Sfax / Tunisia<br />34.74° N — 10.76° E</div>
-            <div className="preloader-corner is-bl mono">
-              <span className="blink-dot" /> {status}
-            </div>
-            <button className="preloader-corner is-br mono preloader-skip" onClick={() => setLeaving(true)}>
-              Skip intro →
-            </button>
-
-            <motion.img
-              src="/media/logo.webp"
-              alt=""
-              className="preloader-mark"
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1, ease: EASE_OUT }}
-            />
-            <div className="preloader-count">
-              <span>{String(progress).padStart(3, "0")}</span>
-              <small>%</small>
-            </div>
-            <motion.p className="preloader-line" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
-              Break the <em>pattern.</em>
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <motion.div className="intro-content" animate={leaving ? { opacity: 0, scale: 0.97 } : { opacity: 1 }} transition={{ duration: 0.25 }}>
+        <motion.img
+          src="/media/logo.webp"
+          alt=""
+          className="intro-logo"
+          initial={{ scale: 0.7, opacity: 0, rotate: -8 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
+        />
+        <p className="intro-theme">
+          {words.map((w, i) => (
+            <span className="intro-word-mask" key={w}>
+              <motion.span
+                className={`intro-word ${w === "The" ? "is-small" : ""}`}
+                initial={{ y: "110%" }}
+                animate={{ y: "0%" }}
+                transition={{ duration: 0.6, delay: 0.2 + i * 0.1, ease: EASE_OUT }}
+              >
+                {w}
+              </motion.span>
+            </span>
+          ))}
+        </p>
+        <motion.span className="intro-meta mono" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55, duration: 0.4 }}>
+          {EVENT.dateShort.replace(/\./g, " · ")} — Sfax
+        </motion.span>
+        <motion.span className="intro-line" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT }} />
+      </motion.div>
     </div>
   );
 }

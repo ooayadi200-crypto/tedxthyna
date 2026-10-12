@@ -107,25 +107,23 @@ html.has-cursor input, html.has-cursor textarea { cursor: text; }
 .cursor-ring span { font: 500 10px var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: #fff; text-align: center; }
 .cursor-dot.is-hidden, .cursor-ring.is-hidden { opacity: 0; }
 
-/* ---------- preloader ---------- */
-.preloader { position: fixed; inset: 0; z-index: 150; pointer-events: none; }
-.preloader > * { pointer-events: auto; }
-.preloader-panel { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--black); }
-.preloader-panel.is-top { top: 0; }
-.preloader-panel.is-bottom { bottom: 0; }
-.preloader-seam { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--red-hot); box-shadow: 0 0 24px 2px var(--red); transform-origin: 0 50%; }
-.preloader-content { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 18px; text-align: center; }
-.preloader-mark { width: clamp(150px, 22vw, 230px); filter: drop-shadow(0 0 40px rgba(195,43,48,.45)); }
-.preloader-count { font: 500 clamp(64px, 13vw, 180px)/0.85 var(--f-display); letter-spacing: -0.06em; font-variant-numeric: tabular-nums; display: flex; align-items: flex-start; }
-.preloader-count small { font: 400 14px var(--f-mono); color: var(--red-hot); margin: 0.6em 0 0 8px; }
-.preloader-line { font: 500 clamp(18px, 2.2vw, 26px) var(--f-display); letter-spacing: -0.02em; color: var(--fg-dim); }
-.preloader-corner { position: absolute; color: var(--taupe); line-height: 1.7; }
-.preloader-corner.is-tl { top: 28px; left: var(--gutter); text-align: left; }
-.preloader-corner.is-tr { top: 28px; right: var(--gutter); text-align: right; }
-.preloader-corner.is-bl { bottom: 28px; left: var(--gutter); color: var(--fg); display: flex; gap: 10px; align-items: center; }
-.preloader-corner.is-br { bottom: 28px; right: var(--gutter); }
-.preloader-skip { color: var(--taupe); transition: color .2s; }
-.preloader-skip:hover { color: var(--red-hot); }
+/* ---------- intro ---------- */
+.intro { position: fixed; inset: 0; z-index: 150; cursor: pointer; }
+.intro-half { position: absolute; z-index: 1; left: -2%; right: -2%; height: 51%; background: var(--surface-paper) url("/media/paper.webp") center / 900px auto; }
+.intro-half.is-top { top: 0; height: 76%; }
+.intro-half.is-bottom { bottom: 0; height: 25%; }
+.intro-half.is-bottom::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 40%; background: url("/media/paper.webp") center / 900px auto; }
+.intro-tear { height: 28px; }
+.intro-half.is-top .intro-tear { bottom: -27px; filter: none; }
+.intro-half.is-bottom .intro-tear { top: -27px; }
+.intro-content { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 14px; text-align: center; color: #141110; pointer-events: none; }
+.intro-logo { width: clamp(120px, 16vw, 170px); height: auto; padding: 6px; background: #000; border-radius: 50%; box-shadow: 0 20px 40px -8px rgba(0,0,0,.45); }
+.intro-theme { display: flex; align-items: baseline; gap: .18em; margin-top: 6px; font: italic 500 clamp(40px, 7vw, 96px)/1 var(--f-serif); color: #b3121d; white-space: nowrap; }
+.intro-word-mask { display: inline-block; overflow: hidden; padding: 0 .04em .12em; }
+.intro-word { display: inline-block; }
+.intro-word.is-small { font-size: .5em; color: #141110; }
+.intro-meta { color: #6b5f58; letter-spacing: .3em; }
+.intro-line { display: block; width: 120px; height: 2px; background: #b3121d; transform-origin: 50% 50%; }
 
 /* ---------- nav ---------- */
 .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 84px; padding: 0 var(--gutter); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: background .5s, border-color .5s, height .5s var(--ease-out); border-bottom: 1px solid transparent; }
@@ -720,7 +718,6 @@ html.has-cursor input, html.has-cursor textarea { cursor: text; }
   .sp-filter .script { display: none; }
 }
 @media (max-width: 640px) {
-  .preloader-corner.is-tr { display: none; }
   .sp-collage { width: 92%; }
   .credit { flex-direction: column; gap: 4px; }
 }
