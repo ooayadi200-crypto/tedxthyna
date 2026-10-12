@@ -1,42 +1,42 @@
-import json, os, urllib.request, urllib.parse
-UA={"User-Agent":"TEDxThynaYouth-site/1.0 (affes.zied@tedxthyna.com)"}
-def get(u):
-    return urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=60).read()
+import json, os, sys, urllib.request, urllib.parse, traceback
+UA={"User-Agent":"TEDxThynaYouthWebsite/1.0 (https://tedxthyna.com; affes.zied@tedxthyna.com) python-urllib"}
 os.makedirs("out",exist_ok=True)
+log=open("out/log.txt","w")
+def L(*a): print(*a); print(*a,file=log); log.flush()
+def get(u):
+    return urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=90).read()
 manifest=[]
-# --- Wikimedia Commons: Sfax ---
-cats=["Hôtel de ville de Sfax","Medina of Sfax","Bab Diwan (Sfax)","Ramparts of Sfax","Sfax","Grand Mosque of Sfax","Night views of Sfax","Municipal Theatre of Sfax","Dar Jallouli Museum","Sfax Cathedral"]
-for cat in cats:
-    q=("https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=categorymembers&gcmtype=file&gcmlimit=200"
-       "&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=2400&gcmtitle="+urllib.parse.quote("Category:"+cat))
-    try: data=json.loads(get(q))
-    except Exception as e: print("ERR",cat,e); continue
-    pages=list((data.get("query") or {}).get("pages",{}).values())
+def save(fn,url,meta):
+    try:
+        data=get(url); open(fn,"wb").write(data); meta.update(file=fn,bytes=len(data)); manifest.append(meta); L("OK",fn,len(data))
+    except Exception as e: L("ERR dl",fn,url,e)
+
+# Wikimedia Commons search (namespace 6 = files)
+for i_q,q in enumerate(["Sfax medina","Sfax hotel de ville","Sfax Bab Diwan","Sfax night","Sfax city","Sfax theatre municipal","Sfax ramparts","Sfax panorama"]):
+    api=("https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=40"
+         "&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=2560&gsrsearch="+urllib.parse.quote(q+" filetype:bitmap"))
+    try: data=json.loads(get(api))
+    except Exception as e: L("ERR api",q,e); continue
+    pages=list((data.get("query") or {}).get("pages",{}).values()); L("Q",q,len(pages))
     imgs=[]
     for p in pages:
-        ii=(p.get("imageinfo") or [{}])[0]
-        if not ii.get("url","").lower().endswith((".jpg",".jpeg")): continue
+        ii=(p.get("imageinfo") or [{}])[0]; u=ii.get("url","")
+        if not u.lower().endswith((".jpg",".jpeg")): continue
         w,h=ii.get("width",0),ii.get("height",0)
-        if w<2400 or w<h: continue
+        if w<2500 or w<h*1.1: continue
         md=ii.get("extmetadata",{})
-        imgs.append((w*h,p["title"],ii.get("thumburl") or ii["url"],md.get("LicenseShortName",{}).get("value",""),md.get("Artist",{}).get("value","")))
+        imgs.append((w*h,p["title"],ii.get("thumburl") or u,md.get("LicenseShortName",{}).get("value",""),md.get("Artist",{}).get("value","")[:120],w,h))
     imgs.sort(reverse=True)
-    for i,(px,title,url,lic,artist) in enumerate(imgs[:6]):
-        fn="out/commons-"+cat.split(" ")[0].lower()+f"-{i}.jpg"
-        try:
-            open(fn,"wb").write(get(url)); manifest.append({"file":fn,"title":title,"license":lic,"artist":artist,"src":url})
-        except Exception as e: print("ERR",title,e)
-# --- Unsplash (free license) ---
-for q in ["conference stage spotlight","microphone stage red light","audience theater lights","speaker on stage","backstage team event","notebook pen planning dark","tedx stage","red theatre seats"]:
-    try:
-        data=json.loads(get("https://unsplash.com/napi/search/photos?per_page=6&orientation=landscape&query="+urllib.parse.quote(q)))
-    except Exception as e: print("ERR",q,e); continue
-    for i,r in enumerate(data.get("results",[])[:6]):
-        if r.get("premium") or r.get("plus"): continue
-        fn="out/unsplash-"+q.split(" ")[0]+"-"+q.split(" ")[1]+f"-{i}.jpg"
-        try:
-            open(fn,"wb").write(get(r["urls"]["raw"]+"&w=2400&q=85&fm=jpg"))
-            manifest.append({"file":fn,"title":r.get("alt_description"),"license":"Unsplash License","artist":r["user"]["name"],"src":r["links"]["html"]})
-        except Exception as e: print("ERR",fn,e)
+    for i,(px,title,url,lic,art,w,h) in enumerate(imgs[:5]):
+        save(f"out/sfax-{i_q}-{i}.jpg",url,{"title":title,"license":lic,"artist":art,"orig":f"{w}x{h}"})
+
+# Openverse (CC-licensed, commercial use allowed)
+for q in ["conference stage spotlight","microphone stage","theater audience","speaker stage lights","event team backstage","red theater curtain","notebook planning desk"]:
+    api="https://api.openverse.org/v1/images/?page_size=8&license_type=commercial&aspect_ratio=wide&size=large&q="+urllib.parse.quote(q)
+    try: data=json.loads(get(api))
+    except Exception as e: L("ERR ov",q,e); continue
+    res=data.get("results",[]); L("OV",q,len(res))
+    for i,r in enumerate(res[:6]):
+        save("out/ov-"+q.replace(" ","_")+f"-{i}.jpg",r["url"],{"title":r.get("title"),"license":(r.get("license") or "")+" "+(r.get("license_version") or ""),"artist":r.get("creator"),"src":r.get("foreign_landing_url"),"orig":f"{r.get('width')}x{r.get('height')}"})
 json.dump(manifest,open("out/manifest.json","w"),indent=1)
-print(len(manifest),"files")
+L("TOTAL",len(manifest))
