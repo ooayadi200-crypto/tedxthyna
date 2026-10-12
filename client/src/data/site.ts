@@ -51,7 +51,7 @@ export const FILES = [
     title: "Why we gather",
     question: "What is the case really about?",
     href: "/mission",
-    image: "dossier",
+    image: "gather",
   },
   {
     code: "02",
@@ -59,7 +59,7 @@ export const FILES = [
     title: "Who holds the mic",
     question: "Ten voices, one stage.",
     href: "/speakers",
-    image: "jihed",
+    image: "voices",
   },
   {
     code: "03",
@@ -67,7 +67,7 @@ export const FILES = [
     title: "Where it unfolds",
     question: "Where will it happen?",
     href: "/scene",
-    image: "stage",
+    image: "hall",
   },
   {
     code: "04",
@@ -75,7 +75,7 @@ export const FILES = [
     title: "Who runs the operation",
     question: "Who built the file?",
     href: "/organization",
-    image: "board",
+    image: "seats",
   },
   {
     code: "05",
@@ -83,7 +83,7 @@ export const FILES = [
     title: "How the day plays out",
     question: "What happens, and when?",
     href: "/agenda",
-    image: "desk",
+    image: "plan",
   },
 ] as const;
 
@@ -112,6 +112,14 @@ export const ROLE_TAGLINE: Record<Role, [string, string]> = {
 export const speakerSlug = (s: { first: string; last: string }) => `${s.first}-${s.last}`.toLowerCase().replace(/\s+/g, "-");
 
 export const speakerPhoto = (photo: string) => `/media/speakers/${photo}.webp`;
+
+/** Third-party photos used on the site (shown in the footer). */
+export const PHOTO_CREDITS = [
+  { what: "City walls of Sfax", who: "Hamed Gamaoun", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51962668" },
+  { what: "Medina of Sfax", who: "IssamBarhoumi", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51853012" },
+  { what: "Teatro de Santa Isabel", who: "Wilfredo R. Rodríguez H.", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=94701086" },
+  { what: "Theater Show", who: "Kurt Kaiser", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=107668370" },
+];
 
 export const img = (name: string, size: 1000 | 2000 = 2000) => `/media/${name}-${size}.webp`;
 export const srcSet = (name: string) => `/media/${name}-1000.webp 1000w, /media/${name}-2000.webp 2000w`;

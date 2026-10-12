@@ -6,11 +6,11 @@ import { EVENT, NAV, img } from "@/data/site";
 import { EASE, EASE_OUT } from "./motion";
 
 const MENU_IMAGES: Record<string, string> = {
-  "/mission": "dossier",
-  "/speakers": "jihed",
-  "/organization": "board",
-  "/scene": "stage",
-  "/agenda": "desk",
+  "/mission": "gather",
+  "/speakers": "voices",
+  "/organization": "seats",
+  "/scene": "hall",
+  "/agenda": "plan",
   "/contact": "sfax",
 };
 

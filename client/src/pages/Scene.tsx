@@ -1,5 +1,5 @@
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { EVENT, img } from "@/data/site";
+import { EVENT, img, srcSet } from "@/data/site";
 import { Lines, Parallax, Reveal } from "@/components/site/motion";
 import { Kicker, NextFile, Page, PageHero } from "@/components/site/Page";
 
@@ -70,7 +70,7 @@ export default function Scene() {
 
         <section className="city">
           <Parallax className="city-img" amount={80}>
-            <img src={img("sfax", 1000)} alt="Sfax by night" loading="lazy" />
+            <img src={img("sfax", 1000)} srcSet={srcSet("sfax")} sizes="100vw" alt="The medina walls of Sfax" loading="lazy" />
           </Parallax>
           <div className="city-shade" />
           <div className="city-copy">

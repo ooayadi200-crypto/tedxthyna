@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUp, ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "wouter";
-import { EVENT, NAV } from "@/data/site";
+import { EVENT, NAV, PHOTO_CREDITS } from "@/data/site";
 import { useLenis } from "./SmoothScroll";
 
 export function Footer() {
@@ -64,6 +64,14 @@ export function Footer() {
       <div className="footer-bottom mono">
         <span>© 2026 TEDx Thyna Youth</span>
         <span>This independent TEDx event is operated under license from TED.</span>
+        <details className="footer-credits">
+          <summary>Photo credits</summary>
+          {PHOTO_CREDITS.map((c) => (
+            <a key={c.url} href={c.url} target="_blank" rel="noreferrer">
+              {c.what} — {c.who} ({c.license})
+            </a>
+          ))}
+        </details>
         <button onClick={toTop} className="footer-top-btn" data-cursor="Up">
           Back to top <ArrowUp size={13} />
         </button>
