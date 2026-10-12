@@ -1,0 +1,19 @@
+name: fetch-photo-candidates
+on:
+  push:
+    branches: [assets/fetch]
+    paths: [fetch.py, .github/workflows/fetch.yml]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 fetch.py
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add out
+          git commit -m "Photo candidates" || echo nothing
+          git push
