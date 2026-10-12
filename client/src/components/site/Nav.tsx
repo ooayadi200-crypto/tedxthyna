@@ -51,7 +51,7 @@ export function Nav() {
   return (
     <>
       <motion.header
-        className={`nav ${solid ? "is-solid" : ""} ${open ? "is-open" : ""} ${location === "/" ? "on-paper" : ""}`}
+        className={`nav ${solid ? "is-solid" : ""} ${open ? "is-open" : ""} ${["/", "/contact"].includes(location) ? "on-paper" : ""}`}
         animate={{ y: hidden ? "-110%" : "0%" }}
         transition={{ duration: 0.5, ease: EASE }}
       >
