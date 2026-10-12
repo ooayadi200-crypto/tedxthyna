@@ -91,13 +91,13 @@ export type Role = "Speaker" | "Panelist" | "Moderator";
 
 /** Line-up as announced on @tedxthyna. `bio` uses *asterisks* for the words set in red on the posters. */
 export const SPEAKERS: { first: string; last: string; role: Role; label: string; bio: string; photo: string }[] = [
-  { first: "Sawsen", last: "Haj Amor", role: "Speaker", label: "Speaker", bio: "*AI* journalist & CEO of Business Talk, *AI* media platform", photo: "sawsen-haj-amor" },
+  { first: "Sawsen", last: "Haj Amor", role: "Speaker", label: "Speaker", bio: "AI *Journalist* & CEO *Business Talk*, AI Media *platform* & Shark *library*", photo: "sawsen-haj-amor" },
   { first: "Hamza", last: "Belloumi", role: "Speaker", label: "Speaker", bio: "Tunisian *journalist*, television *presenter*", photo: "hamza-belloumi" },
   { first: "Sawsen", last: "Maalej", role: "Speaker", label: "Speaker", bio: "Tunisian *actress*, media personality & *broadcaster*", photo: "sawsen-maalej" },
   { first: "Nawel", last: "Bizid", role: "Speaker", label: "Speaker", bio: "Tunisian *journalist*, media *producer* & *podcaster*", photo: "nawel-bizid" },
   { first: "Mohamed", last: "Khammessi", role: "Speaker", label: "Speaker", bio: "TV & Radio *presenter*, producer, *podcast* host", photo: "mohamed-khammessi" },
-  { first: "Omar", last: "Derbel", role: "Panelist", label: "Panelist", bio: "Exploring *art*, literature and *influence*", photo: "omar-derbel" },
-  { first: "Adem", last: "Sebiaa", role: "Panelist", label: "Panelist", bio: "Master in *diplomacy* & international relations, *creator*", photo: "adem-sebiaa" },
+  { first: "Omar", last: "Derbel", role: "Panelist", label: "Panelist", bio: "Exploring *art*, literature and *influencer*", photo: "omar-derbel" },
+  { first: "Adem", last: "Sebiaa", role: "Panelist", label: "Panelist", bio: "Master in *Diplomacy* and international relations, *Content creator* 120k+ on TikTok", photo: "adem-sebiaa" },
   { first: "Dhia", last: "Saibi", role: "Panelist", label: "Panelist", bio: "Tunisian *football* content *creator*", photo: "dhia-saibi" },
   { first: "Oumayma", last: "Meherzi", role: "Moderator", label: "Discussion Panel Moderator", bio: "Tunisian *actress*", photo: "oumayma-meherzi" },
   { first: "Jihed", last: "Cherni", role: "Moderator", label: "Moderator", bio: "Tunisian *actor*, *screenwriter* & media *producer*", photo: "jihed-cherni" },
